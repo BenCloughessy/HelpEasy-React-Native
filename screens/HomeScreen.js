@@ -16,8 +16,7 @@ const HomeScreen = () => {
 
     return (
         <>
-        
-        <View style={styles.container1}>
+        <View style={(modal1Visible || modal2Visible || modal3Visible) ? styles.container1Blur : styles.container1}> 
             <Text style={styles.homeText1}>Welcome to Help Easy</Text>
 
             {/* Modal 1 */}
@@ -26,6 +25,7 @@ const HomeScreen = () => {
                     animationType="slide"
                     transparent={true}
                     visible={modal1Visible}
+                    backgroundColor='blue'
                     onRequestClose={() => {
                     Alert.alert("Modal has been closed.");
                     setModal1Visible(!modal1Visible);
@@ -51,7 +51,7 @@ const HomeScreen = () => {
                     style={[styles.button, styles.buttonOpen]}
                     onPress={() => setModal1Visible(true)}
                 >
-                    <Text style={styles.textStyle}>Tutorial</Text>
+                    <Text style={(modal1Visible || modal2Visible || modal3Visible) ? styles.textStyleOpaque: styles.textStyle}>Tutorial</Text>
                 </Pressable>
             </View>
 
@@ -112,8 +112,8 @@ const HomeScreen = () => {
             </View> 
         </View>
         
-        <View style={styles.container2}>
-            <Ionicons name='rocket' size={150} color='#60b593'  />
+        <View style={(modal1Visible || modal2Visible || modal3Visible) ? styles.container2Blur : styles.container2}>
+            <Ionicons name='rocket' size={150} color='#60b593' style={(modal1Visible || modal2Visible || modal3Visible) ? {opacity: .5} : {opacity: 1}}  />
         </View>
         </>
         
@@ -135,10 +135,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1
     },
+    container1Blur: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        opacity: .3,
+        backgroundColor: '#535756'
+    },
     container2: {
         alignItems: 'center',
         justifyContent: 'start',
         flex: 1
+    },
+    container2Blur: {
+        alignItems: 'center',
+        justifyContent: 'start',
+        flex: 1,
+        opacity: .3,
+        backgroundColor: '#535756'
     },
     centeredView: {
         flex: 1,
@@ -166,7 +180,13 @@ const styles = StyleSheet.create({
       button: {
         borderRadius: 20,
         padding: 10,
-        elevation: 2
+        elevation: 2,
+      },
+      buttonOpaque: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+        opacity: .7
       },
       buttonOpen: {
         backgroundColor: "#4f7ba5",
@@ -176,6 +196,11 @@ const styles = StyleSheet.create({
       },
       textStyle: {
         color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+      },
+      textStyleOpaque: {
+        color: "#a6a6a6",
         fontWeight: "bold",
         textAlign: "center"
       },
