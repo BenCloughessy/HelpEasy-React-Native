@@ -1,9 +1,10 @@
 import PlaceFinder from "../TomTom search api/placeFinder.js";
 import { useState, useEffect } from "react";
-import { Button, View, Text, FlatList } from "react-native";
-import { StyleSheet } from "react-native";
+import { Button, View, StyleSheet} from "react-native";
 import * as Location from 'expo-location';
 import SearchResultsView from "../TomTom search api/SearchResultsView.js";
+import LoadingScreen from "./LoadingScreen.js";
+import ErrorScreen from "./ErrorScreen.js";
 
 const LocalSearchScreen = () => {
     const [location, setLocation] = useState(null)
@@ -49,30 +50,28 @@ const LocalSearchScreen = () => {
     }
 
       // Error and loading handling after search request
-      if (isLoading) {
-        text = 'Waiting..';
-      } 
-      if (errorMsg) {
-        text = errorMsg;
-      }
-      if (results.length > 0) {
+      if (isLoading && !location) {
+        return <LoadingScreen />
       }
 
-      // Display rendered before and during loading
-      const searchRequestView = (
-        <>
-          <View style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
-            <Button title="Search" color='#60b593' onPress={getLocation} />
+      // If error or no results
+      if (errorMsg || (location && results.length === 0)) { 
+        return <ErrorScreen errorMsg={errorMsg} />
+      } 
+
+      if (results.length > 0) {
+        return <SearchResultsView results={results} />
+      }
+
+        return (
+          <View style={styles.container}>
+            <View style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
+              <Button title="Search" color='#60b593' onPress={getLocation} />
+            </View>
           </View>
-          <Text>{text}</Text>
-        </>
-      )
-        
-    return (
-        <View style={styles.container}>
-          {results.length > 0 ? <SearchResultsView results={results} /> : searchRequestView}
-        </View>
-    );
+      );  
+
+      
 }
 
 const styles = StyleSheet.create({

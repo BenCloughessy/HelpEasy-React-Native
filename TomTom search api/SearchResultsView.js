@@ -1,12 +1,12 @@
-import { FlatList, Text, SafeAreaView, View } from "react-native";
-import { Avatar, Card, Divider, Icon, ListItem } from "@rneui/themed";
+import { FlatList, Text, SafeAreaView } from "react-native";
+import { Avatar, Card, ListItem } from "@rneui/themed";
 
 // Convert distance from 
 function metersToMi (dist) {
     return dist = (dist * 0.000621371).toFixed(2)
 }
 
-const Item = ({name, dist, id}) => {
+const Item = ({ name, dist, id }) => {
 
     return ( 
             <Card>
