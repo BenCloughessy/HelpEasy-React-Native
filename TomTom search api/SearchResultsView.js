@@ -1,6 +1,5 @@
 import { FlatList, Text, SafeAreaView } from "react-native";
 import { Avatar, Button, Card, ListItem, Icon } from "@rneui/themed";
-import { View } from "react-native";
 
 // Convert distance from location (meters to miles)
 function metersToMi (dist) {
@@ -29,16 +28,23 @@ const Item = ({ name, dist, id }) => {
             </Card>
     );
 }
+
+
     
-const SearchResultsView = (results) => {
+const SearchResultsView = (results, { navigation }) => {
     const renderItem = ({ item }) => (
         <Item id={item.id} name={item.poi.name} dist={metersToMi(item.dist)} />
     )
 
     return (
         <>
-            <Button type="solid">
-                <Icon name="home" color="white" />
+            <Button
+                type="solid"
+                containerStyle={{ width: 100, marginLeft: 14, marginTop: 8 }}
+                buttonStyle={{ borderRadius: 25 }}
+                color='#4f7ba5'
+            >
+                <Icon name="arrow-back-outline" type='ionicon' color="white" />
                 Back
             </Button>
 

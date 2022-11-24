@@ -7,6 +7,7 @@ import AboutScreen from "./AboutScreen";
 import ResourcesScreen from "./ResourcesScreen";
 import { Constants } from "expo-constants";
 import { Ionicons } from '@expo/vector-icons';
+import SearchStack from "./LocalSearchScreen";
 
 // '#4f7ba5' blue I like
 
@@ -47,7 +48,7 @@ const Main = () => {
 
                 <Tab.Screen 
                     name="Local Search"
-                    component={LocalSearchScreen}
+                    component={SearchStack}
                     options={{ title: 'Help Easy', tabBarLabel: 'Lift Off' }}
                 />
 

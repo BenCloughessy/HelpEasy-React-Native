@@ -5,7 +5,7 @@ import LoadingScreen from "./LoadingScreen";
 import SearchResultsView from "../TomTom search api/SearchResultsView";
 import { useState, useEffect } from "react";
 
-const ErrorScreen = ({ errorMsg }) => {
+const ErrorScreen = ({ errorMsg, navigation }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [results, setResults] = useState([])
     const [lat, setLat] = useState(null)
@@ -50,7 +50,8 @@ const ErrorScreen = ({ errorMsg }) => {
 
        // Error and loading handling after search request
        if (isLoading && !lat) {
-        return <LoadingScreen />
+        // return <LoadingScreen />
+        navigation.navigate('loading')
       }
 
     //   // If error or no results
@@ -60,7 +61,8 @@ const ErrorScreen = ({ errorMsg }) => {
 
       // If results is populated
       if (results.length > 0) {
-        return <SearchResultsView results={results} />
+        // return <SearchResultsView results={results} />
+        navigation.navigate('searchResults', { results: results})
       }
 
     return (

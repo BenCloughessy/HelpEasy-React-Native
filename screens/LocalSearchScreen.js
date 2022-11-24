@@ -6,13 +6,46 @@ import * as Location from 'expo-location';
 import SearchResultsView from "../TomTom search api/SearchResultsView.js";
 import LoadingScreen from "./LoadingScreen.js";
 import ErrorScreen from "./ErrorScreen.js";
+import ResultDetailScreen from "./ResultDetailScreen.js";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 
-const LocalSearchScreen = () => {
+const Stack = createStackNavigator()
+
+function MyStack () {
+    return (
+        <Stack.Navigator
+          initialRouteName="search"
+        >
+          <Stack.Screen 
+            name="search"
+            component={LocalSearchScreen}
+          />
+          <Stack.Screen 
+            name="loading"
+            component={LoadingScreen}
+          />
+          <Stack.Screen 
+            name="error"
+            component={ErrorScreen}
+          />
+          <Stack.Screen 
+            name="searchResults"
+            component={SearchResultsView}
+          />
+          <Stack.Screen 
+            name="resultDetail"
+            component={ResultDetailScreen}
+          />
+        </Stack.Navigator>
+    )
+}
+
+const LocalSearchScreen = ({ navigation }) => {
     const [location, setLocation] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [errorMsg, setErrorMsg] = useState(null)
     const [results, setResults] = useState([])
-    let text
 
 
     // Requesting permission and getting location with Expo Location
@@ -52,27 +85,34 @@ const LocalSearchScreen = () => {
 
       // Error and loading handling after search request
       if (isLoading && !location) {
-        return <LoadingScreen />
+        // return <LoadingScreen />
+        navigation.navigate('loading')
       }
 
       // If error or no results
       if (errorMsg || (location && results.length === 0)) { 
-        return <ErrorScreen errorMsg={errorMsg} />
+        // return <ErrorScreen errorMsg={errorMsg} />
+        navigation.navigate('error', { errorMsg: errorMsg})
       } 
 
       if (results.length > 0) {
-        return <SearchResultsView results={results} />
+        // return <SearchResultsView results={results} />
+        navigation.navigate('searchResults', { results: results})
       }
 
         return (
           <View style={styles.container}>
             <View style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
-              <Button type='solid' title="Search" color='#60b593' onPress={getLocation} />
+              <Button
+                type='solid' 
+                title="Search" 
+                color='#60b593'
+                buttonStyle={{ borderRadius: 20 }}
+                onPress={getLocation}
+              />
             </View>
           </View>
       );  
-
-      
 }
 
 const styles = StyleSheet.create({
@@ -84,4 +124,13 @@ const styles = StyleSheet.create({
     },
    });
 
-export default LocalSearchScreen;
+
+   const SearchStack = () => {
+    return (
+      <NavigationContainer independent={true}>
+        <MyStack />
+      </NavigationContainer>
+    )
+   }
+
+export default SearchStack
