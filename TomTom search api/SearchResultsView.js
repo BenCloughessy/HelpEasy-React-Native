@@ -1,13 +1,14 @@
 import { FlatList, Text, SafeAreaView } from "react-native";
-import { Avatar, Card, ListItem } from "@rneui/themed";
+import { Avatar, Button, Card, ListItem, Icon } from "@rneui/themed";
+import { View } from "react-native";
 
-// Convert distance from 
+// Convert distance from location (meters to miles)
 function metersToMi (dist) {
     return dist = (dist * 0.000621371).toFixed(2)
 }
 
+// Content of each item in flatlist
 const Item = ({ name, dist, id }) => {
-
     return ( 
             <Card>
                 <Card.Title style={{ fontSize: 20 }}>{name}</Card.Title>
@@ -30,21 +31,25 @@ const Item = ({ name, dist, id }) => {
 }
     
 const SearchResultsView = (results) => {
-    console.log('searchResultsView:', results)
-    console.log('searchResultsView 2:', results.results)
-    console.log('searchResultsView 3:', results.results[0].poi.name)
     const renderItem = ({ item }) => (
         <Item id={item.id} name={item.poi.name} dist={metersToMi(item.dist)} />
     )
 
     return (
-    <SafeAreaView>
-        <FlatList 
-            data={results.results}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-        />
-    </SafeAreaView>
+        <>
+            <Button type="solid">
+                <Icon name="home" color="white" />
+                Back
+            </Button>
+
+            <SafeAreaView style={{ flex: 1}}>
+                <FlatList 
+                    data={results.results}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                />
+            </SafeAreaView>
+        </>
     );
 }
 

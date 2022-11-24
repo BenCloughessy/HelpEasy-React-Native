@@ -1,25 +1,68 @@
 import { Button, Text } from "@rneui/themed";
 import { View, StyleSheet, ScrollView} from "react-native";
+import PlaceFinder from "../TomTom search api/placeFinder.js";
+import LoadingScreen from "./LoadingScreen";
+import SearchResultsView from "../TomTom search api/SearchResultsView";
+import { useState, useEffect } from "react";
 
 const ErrorScreen = ({ errorMsg }) => {
-    // Hard-coding coordinates for demonstration search
-    const shelterSearch = async(city) => {
-        let lat
-        let lng
+    const [isLoading, setIsLoading] = useState(false)
+    const [results, setResults] = useState([])
+    const [lat, setLat] = useState(null)
+    const [lng, setLng] = useState(null)
 
-        if(city === '') {
-            lat = 
-            lng = 
-        } else if()
+    // Hard-coding coordinates for demonstration search
+    const getLoc = (city) => {
+        setIsLoading(true)
+
+        if(city === 'Cinci') {
+            setLat(39.103119)
+            setLng(-84.512016)
+        } else if(city === 'Chicago') {
+            setLat(41.739685)
+            setLng(-87.554420)
+        } else if(city === 'Dallas') {
+            setLat(32.779167)
+            setLng(-96.808891)
+        }
         
-    
+        return (lat, lng)
+    }
+
+    // Call to TomTom's placeFinder API passing my API key 
+    const shelterSearch = async() => {
         let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
         let results = await placeFinder.getNearbyPlaces(lat, lng)
         results = results.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
-        setResults(results);
+
+        setResults(results)
         
         return results
+    }
+        
+      // Using location to search for shelters after lat and lng have been set
+    useEffect(() => {
+        if (lat) {
+          shelterSearch()
+        }
+        
+      }, [lat])
+
+       // Error and loading handling after search request
+       if (isLoading && !lat) {
+        return <LoadingScreen />
       }
+
+    //   // If error or no results
+    //   if (location && results.length === 0) { 
+    //     return <ErrorScreen errorMsg={errorMsg} />
+    //   } 
+
+      // If results is populated
+      if (results.length > 0) {
+        return <SearchResultsView results={results} />
+      }
+
     return (
         <ScrollView>
             <View style={styles.container}>
@@ -48,18 +91,21 @@ const ErrorScreen = ({ errorMsg }) => {
                     buttonStyle={styles.button}
                     containerStyle={styles.buttonContainer}
                     titleStyle={{ fontWeight: 'bold' }}
+                    onPress={() => getLoc('Cinci')}
                 />
                 <Button
                     title="Chicago, IL"
                     buttonStyle={styles.button}
                     containerStyle={styles.buttonContainer}
                     titleStyle={{ fontWeight: 'bold' }}
+                    onPress={() => getLoc('Chicago')}
                 />
                 <Button
                     title="Dallas, TX"
                     buttonStyle={styles.button}
                     containerStyle={styles.buttonContainer}
                     titleStyle={{ fontWeight: 'bold' }}
+                    onPress={() => getLoc('Dallas')}
                 />
             </View>
         </ScrollView>

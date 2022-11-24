@@ -1,6 +1,7 @@
 import PlaceFinder from "../TomTom search api/placeFinder.js";
 import { useState, useEffect } from "react";
-import { Button, View, StyleSheet} from "react-native";
+import { View, StyleSheet} from "react-native";
+import { Button } from "@rneui/themed";
 import * as Location from 'expo-location';
 import SearchResultsView from "../TomTom search api/SearchResultsView.js";
 import LoadingScreen from "./LoadingScreen.js";
@@ -66,7 +67,7 @@ const LocalSearchScreen = () => {
         return (
           <View style={styles.container}>
             <View style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
-              <Button title="Search" color='#60b593' onPress={getLocation} />
+              <Button type='solid' title="Search" color='#60b593' onPress={getLocation} />
             </View>
           </View>
       );  
