@@ -1,7 +1,7 @@
 import { Text } from "@rneui/themed"
 
 
-const ResultDetailScreen = ({ navigation }) => {
+const ResultDetailScreen = () => {
     return (
         <Text>Result Details</Text>
     )

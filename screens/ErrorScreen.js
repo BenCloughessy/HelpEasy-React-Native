@@ -5,9 +5,9 @@ import LoadingScreen from "./LoadingScreen";
 import SearchResultsView from "../TomTom search api/SearchResultsView";
 import { useState, useEffect } from "react";
 
-const ErrorScreen = ({ errorMsg, navigation }) => {
+const ErrorScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false)
-    const [results, setResults] = useState([])
+    const [results, setResults] = useState(['empty'])
     const [lat, setLat] = useState(null)
     const [lng, setLng] = useState(null)
 
@@ -41,29 +41,28 @@ const ErrorScreen = ({ errorMsg, navigation }) => {
     }
         
       // Using location to search for shelters after lat and lng have been set
-    useEffect(() => {
+      useEffect(() => {
         if (lat) {
           shelterSearch()
-        }
-        
+        } 
       }, [lat])
 
        // Error and loading handling after search request
-       if (isLoading && !lat) {
-        // return <LoadingScreen />
-        navigation.navigate('loading')
-      }
-
-    //   // If error or no results
-    //   if (location && results.length === 0) { 
-    //     return <ErrorScreen errorMsg={errorMsg} />
-    //   } 
+       useEffect(() => {
+        if (isLoading && !lat) {
+            navigation.navigate('loading')
+          }
+       }, [lat])
+       
 
       // If results is populated
-      if (results.length > 0) {
-        // return <SearchResultsView results={results} />
-        navigation.navigate('searchResults', { results: results})
-      }
+      useEffect(() => {
+        if(!(results[0] === 'empty')) {
+            console.log(results)
+            navigation.navigate('searchResults', {results})
+        }
+      }, [results])
+      
 
     return (
         <ScrollView>

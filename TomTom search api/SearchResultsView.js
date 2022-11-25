@@ -1,5 +1,6 @@
 import { FlatList, Text, SafeAreaView } from "react-native";
-import { Avatar, Button, Card, ListItem, Icon } from "@rneui/themed";
+import { Avatar, Card, ListItem, Icon, Button } from "@rneui/themed";
+
 
 // Convert distance from location (meters to miles)
 function metersToMi (dist) {
@@ -7,7 +8,7 @@ function metersToMi (dist) {
 }
 
 // Content of each item in flatlist
-const Item = ({ name, dist, id }) => {
+const Item = ({ name, dist, id, navigation }) => {
     return ( 
             <Card>
                 <Card.Title style={{ fontSize: 20 }}>{name}</Card.Title>
@@ -23,6 +24,7 @@ const Item = ({ name, dist, id }) => {
                             rounded
                             icon={{ name: 'arrow-forward-outline', type: 'ionicon' }}
                             containerStyle={{ backgroundColor: '#4f7ba5' }}
+                            // onPress={navigation.navigate('resultDetails')}
                         />  
                 </ListItem>   
             </Card>
@@ -31,26 +33,30 @@ const Item = ({ name, dist, id }) => {
 
 
     
-const SearchResultsView = (results, { navigation }) => {
+const SearchResultsView = ({route}) => {
+    const { results } = route.params;
+    console.log('searchResultsView,', results)
+
     const renderItem = ({ item }) => (
         <Item id={item.id} name={item.poi.name} dist={metersToMi(item.dist)} />
     )
 
     return (
         <>
-            <Button
+            {/* <Button
                 type="solid"
                 containerStyle={{ width: 100, marginLeft: 14, marginTop: 8 }}
                 buttonStyle={{ borderRadius: 25 }}
                 color='#4f7ba5'
+                onPress={() => navigation.navigate('Home')}
             >
                 <Icon name="arrow-back-outline" type='ionicon' color="white" />
                 Back
-            </Button>
+            </Button> */}
 
             <SafeAreaView style={{ flex: 1}}>
                 <FlatList 
-                    data={results.results}
+                    data={results}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
                 />

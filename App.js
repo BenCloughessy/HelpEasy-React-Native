@@ -4,7 +4,7 @@ import Main from "./screens/MainComponent";
 export default function App() {
   return (
     <NavigationContainer>
-      <Main />
+        <Main />  
     </NavigationContainer>
     
   );

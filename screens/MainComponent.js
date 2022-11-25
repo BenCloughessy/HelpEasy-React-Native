@@ -1,13 +1,12 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
 import { Platform, View } from "react-native";
 import HomeScreen from "./HomeScreen";
 import LocalSearchScreen from "./LocalSearchScreen";
 import AboutScreen from "./AboutScreen";
 import ResourcesScreen from "./ResourcesScreen";
-import { Constants } from "expo-constants";
 import { Ionicons } from '@expo/vector-icons';
-import SearchStack from "./LocalSearchScreen";
+import SearchStack from "./SearchStack";
+
 
 // '#4f7ba5' blue I like
 

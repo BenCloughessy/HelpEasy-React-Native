@@ -7,45 +7,12 @@ import SearchResultsView from "../TomTom search api/SearchResultsView.js";
 import LoadingScreen from "./LoadingScreen.js";
 import ErrorScreen from "./ErrorScreen.js";
 import ResultDetailScreen from "./ResultDetailScreen.js";
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-
-const Stack = createStackNavigator()
-
-function MyStack () {
-    return (
-        <Stack.Navigator
-          initialRouteName="search"
-        >
-          <Stack.Screen 
-            name="search"
-            component={LocalSearchScreen}
-          />
-          <Stack.Screen 
-            name="loading"
-            component={LoadingScreen}
-          />
-          <Stack.Screen 
-            name="error"
-            component={ErrorScreen}
-          />
-          <Stack.Screen 
-            name="searchResults"
-            component={SearchResultsView}
-          />
-          <Stack.Screen 
-            name="resultDetail"
-            component={ResultDetailScreen}
-          />
-        </Stack.Navigator>
-    )
-}
 
 const LocalSearchScreen = ({ navigation }) => {
     const [location, setLocation] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [errorMsg, setErrorMsg] = useState(null)
-    const [results, setResults] = useState([])
+    const [results, setResults] = useState(['empty'])
 
 
     // Requesting permission and getting location with Expo Location
@@ -82,23 +49,24 @@ const LocalSearchScreen = ({ navigation }) => {
       
       return results
     }
+    
+      // Navigate to loading when isLoading changes to true
+      useEffect(() => {
+        if (isLoading && !location) {
+          navigation.navigate('loading')
+        }
+      }, [isLoading])
 
-      // Error and loading handling after search request
-      if (isLoading && !location) {
-        // return <LoadingScreen />
-        navigation.navigate('loading')
-      }
-
-      // If error or no results
-      if (errorMsg || (location && results.length === 0)) { 
-        // return <ErrorScreen errorMsg={errorMsg} />
-        navigation.navigate('error', { errorMsg: errorMsg})
-      } 
-
-      if (results.length > 0) {
-        // return <SearchResultsView results={results} />
-        navigation.navigate('searchResults', { results: results})
-      }
+      // Navigate to errorScreen if no results found, else to searchResultsScreen
+      useEffect(() => {
+        if(!(results[0] === 'empty')) {
+          if (results.length === 0) { 
+            navigation.navigate('error')
+          } else {
+            navigation.navigate('searchResults', {results})
+          }
+        }
+      }, [results])
 
         return (
           <View style={styles.container}>
@@ -108,7 +76,7 @@ const LocalSearchScreen = ({ navigation }) => {
                 title="Search" 
                 color='#60b593'
                 buttonStyle={{ borderRadius: 20 }}
-                onPress={getLocation}
+                onPress={() => getLocation()}
               />
             </View>
           </View>
@@ -124,13 +92,4 @@ const styles = StyleSheet.create({
     },
    });
 
-
-   const SearchStack = () => {
-    return (
-      <NavigationContainer independent={true}>
-        <MyStack />
-      </NavigationContainer>
-    )
-   }
-
-export default SearchStack
+export default LocalSearchScreen
