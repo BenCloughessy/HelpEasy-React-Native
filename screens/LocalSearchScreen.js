@@ -39,6 +39,7 @@ const LocalSearchScreen = ({ navigation }) => {
       let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
       let results = await placeFinder.getNearbyPlaces(lat, lng)
       results = results.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
+      results = results.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
       setResults(results);
       return results
     }
