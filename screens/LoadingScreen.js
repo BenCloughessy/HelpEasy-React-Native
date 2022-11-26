@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { StyleSheet } from "react-native";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import * as Animatable from 'react-native-animatable';
 
 const LoadingScreen = () => {

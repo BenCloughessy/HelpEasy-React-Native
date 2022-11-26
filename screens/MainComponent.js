@@ -1,17 +1,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform, View } from "react-native";
 import HomeScreen from "./HomeScreen";
-import LocalSearchScreen from "./LocalSearchScreen";
 import AboutScreen from "./AboutScreen";
 import ResourcesScreen from "./ResourcesScreen";
 import { Ionicons } from '@expo/vector-icons';
 import SearchStack from "./SearchStack";
+import { useState } from "react";
 
-
-// '#4f7ba5' blue I like
-
-const screenOptions = ({ route }) => ({
-    tabBarIcon: ({color, size }) => {
+const screenOptions = ({route}) => ({
+    tabBarIcon: ({ color, size }) => {
       let iconName;
       
       if (route.name === 'Home') {
@@ -36,6 +33,13 @@ const screenOptions = ({ route }) => ({
 const Tab = createBottomTabNavigator();
 
 const Main = () => {
+
+  // Using getActiveModal to retrieve activeModal from homeScreen for styling
+  const [activeModal, setActiveModal] = useState(0)
+  const getActiveModal = (activeModal) => {
+    setActiveModal(activeModal)
+  }
+
     return (
         <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
             <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
@@ -43,6 +47,7 @@ const Main = () => {
                     name="Home"
                     component={HomeScreen}
                     options={{ title: 'Help Easy', tabBarLabel: 'Home' }}
+                    getActiveModal={getActiveModal}
                 />
 
                 <Tab.Screen 

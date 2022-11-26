@@ -8,9 +8,13 @@ import ResultDetailScreen from "./ResultDetailScreen";
 
 const Stack = createStackNavigator()
 
+const screenOptions = () => ({
+  headerShown: false
+})
+
 function MyStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen 
         name="search"
         component={LocalSearchScreen}

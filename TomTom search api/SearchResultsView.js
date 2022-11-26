@@ -24,35 +24,33 @@ const Item = ({ name, dist, id, navigation }) => {
                             rounded
                             icon={{ name: 'arrow-forward-outline', type: 'ionicon' }}
                             containerStyle={{ backgroundColor: '#4f7ba5' }}
-                            // onPress={navigation.navigate('resultDetails')}
+                            onPress={navigation.navigate('resultDetails')}
                         />  
                 </ListItem>   
             </Card>
     );
 }
-
-
-    
-const SearchResultsView = ({route}) => {
+  
+const SearchResultsView = ({route, navigation}) => {
     const { results } = route.params;
     console.log('searchResultsView,', results)
 
-    const renderItem = ({ item }) => (
-        <Item id={item.id} name={item.poi.name} dist={metersToMi(item.dist)} />
+    const renderItem = ({ item, navigation }) => (
+        <Item id={item.id} name={item.poi.name} dist={metersToMi(item.dist)} navigation={navigation} />
     )
 
     return (
         <>
-            {/* <Button
+            <Button
                 type="solid"
                 containerStyle={{ width: 100, marginLeft: 14, marginTop: 8 }}
                 buttonStyle={{ borderRadius: 25 }}
                 color='#4f7ba5'
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.goBack()}
             >
                 <Icon name="arrow-back-outline" type='ionicon' color="white" />
                 Back
-            </Button> */}
+            </Button>
 
             <SafeAreaView style={{ flex: 1}}>
                 <FlatList 

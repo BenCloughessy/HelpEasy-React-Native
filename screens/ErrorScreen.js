@@ -1,13 +1,12 @@
 import { Button, Text } from "@rneui/themed";
 import { View, StyleSheet, ScrollView} from "react-native";
 import PlaceFinder from "../TomTom search api/placeFinder.js";
-import LoadingScreen from "./LoadingScreen";
-import SearchResultsView from "../TomTom search api/SearchResultsView";
 import { useState, useEffect } from "react";
+import { StackActions } from "@react-navigation/native";
 
 const ErrorScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false)
-    const [results, setResults] = useState(['empty'])
+    const [results, setResults] = useState(['empty']) // initialize to this string to catch a change even if results returns empty array
     const [lat, setLat] = useState(null)
     const [lng, setLng] = useState(null)
 
@@ -47,7 +46,7 @@ const ErrorScreen = ({ navigation }) => {
         } 
       }, [lat])
 
-       // Error and loading handling after search request
+       // Navigate to loadingScreen when isLoading but before setting coordinates
        useEffect(() => {
         if (isLoading && !lat) {
             navigation.navigate('loading')
@@ -55,10 +54,9 @@ const ErrorScreen = ({ navigation }) => {
        }, [lat])
        
 
-      // If results is populated
+      // Navigate to searchResultsView when results populates
       useEffect(() => {
         if(!(results[0] === 'empty')) {
-            console.log(results)
             navigation.navigate('searchResults', {results})
         }
       }, [results])
@@ -68,7 +66,16 @@ const ErrorScreen = ({ navigation }) => {
         <ScrollView>
             <View style={styles.container}>
                 <Text style={[styles.text, { fontStyle: 'italic', fontSize: 25, fontWeight: 'bold' }]}>We're Sorry,</Text>
-                <Text style={[styles.text, { marginBottom: 70 }]}>It seems we were unable to find any shelters near your location.</Text>
+                <Text style={[styles.text, { marginBottom: 30 }]}>It seems we were unable to find any shelters near your location.</Text>
+                <Button
+                    title="Try Again"
+                    buttonStyle={[styles.button, { borderRadius: 20 }]}
+                    containerStyle={styles.tryAgainButtonContainer}
+                    titleStyle={{ fontWeight: 'bold' }}
+                    onPress={() => {
+                        navigation.dispatch(StackActions.popToTop)
+                    }}
+                />
                 <Text style={[styles.text, { fontStyle: 'italic', fontSize: 25, fontWeight: 'bold' }]}>Remember:</Text>
                 <Text style={[styles.text, { marginBottom: 30 }]}>You can still be helpful!</Text>
                 <Text style={[styles.text, { marginBottom: 0 }]}>Take a moment to introduce yourself</Text>
@@ -107,7 +114,7 @@ const ErrorScreen = ({ navigation }) => {
                     containerStyle={styles.buttonContainer}
                     titleStyle={{ fontWeight: 'bold' }}
                     onPress={() => getLoc('Dallas')}
-                />
+                />    
             </View>
         </ScrollView>
     )
@@ -129,12 +136,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#60b593',
         borderWidth: 2,
         borderColor: '#60b593',
-         borderRadius: 30
+        borderRadius: 30
     },
     buttonContainer: {
         width: 200,
         marginHorizontal: 50,
         marginVertical: 10
+    },
+    tryAgainButton: {
+        backgroundColor: '#4f7ba5',
+        borderColor: '#4f7ba5',
+        borderRadius: 20
+    },
+    tryAgainButtonContainer: {
+        width: 115,
+        marginBottom: 30
     }
 })
 
