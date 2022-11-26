@@ -7,16 +7,27 @@ function metersToMi (dist) {
     return dist = (dist * 0.000621371).toFixed(2)
 }
 
-// Content of each item in flatlist
-const Item = ({ name, dist, id, navigation }) => {
-    return ( 
+// // // Content of each item in flatlist
+// // const Item = ({ name, dist, id, navigation }) => {
+// //     return ( 
+            
+// //     );
+// }
+  
+const SearchResultsView = ({route, navigation}) => {
+    const { results } = route.params;
+    console.log('searchResultsView,', results)
+
+    const renderItem = ({ item: shelter }, dist) => {
+        console.log('shelter name', shelter.poi.name)
+        return (
             <Card>
-                <Card.Title style={{ fontSize: 20 }}>{name}</Card.Title>
+                <Card.Title style={{ fontSize: 20 }}>{shelter.poi.name}</Card.Title>
                 <Card.Divider></Card.Divider>
-                <ListItem key={id}>
+                <ListItem key={shelter.id}>
                     <ListItem.Content style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                         <Text style={{ fontSize: 23 }}>
-                            {`${dist} miles`}
+                            {`${metersToMi(shelter.dist)} miles`}
                         </Text>
                     </ListItem.Content>
                         <Avatar
@@ -24,20 +35,12 @@ const Item = ({ name, dist, id, navigation }) => {
                             rounded
                             icon={{ name: 'arrow-forward-outline', type: 'ionicon' }}
                             containerStyle={{ backgroundColor: '#4f7ba5' }}
-                            onPress={navigation.navigate('resultDetails')}
+                            onPress={() => navigation.navigate('resultDetails', { shelter })}
                         />  
                 </ListItem>   
             </Card>
-    );
-}
-  
-const SearchResultsView = ({route, navigation}) => {
-    const { results } = route.params;
-    console.log('searchResultsView,', results)
-
-    const renderItem = ({ item, navigation }) => (
-        <Item id={item.id} name={item.poi.name} dist={metersToMi(item.dist)} navigation={navigation} />
-    )
+        )
+    }
 
     return (
         <>
