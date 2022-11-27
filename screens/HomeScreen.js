@@ -1,15 +1,15 @@
-import { Text, View, Alert, Modal, Pressable, StyleSheet  } from "react-native";
+import { Text, View, Modal, Pressable, StyleSheet  } from "react-native";
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
+import * as Animatable from 'react-native-animatable';
 
 const HomeScreen = () => {
     const [modal1Visible, setModal1Visible] = useState(false);
     const [modal2Visible, setModal2Visible] = useState(false);
-    const [modal3Visible, setModal3Visible] = useState(false);
 
     return (
         <>
-            <View style={(modal1Visible || modal2Visible || modal3Visible) ? styles.container1Blur : styles.container1}> 
+            <Animatable.View animation='bounceInUp' duration={1900} delay={100} style={(modal1Visible || modal2Visible) ? styles.container1Blur : styles.container1}> 
                 <Text style={styles.homeText1}>Welcome to Help Easy</Text>
 
                 {/* Modal 1 */}
@@ -19,20 +19,16 @@ const HomeScreen = () => {
                         transparent={true}
                         visible={modal1Visible}
                         backgroundColor='blue'
-                        onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
-                        setModal1Visible(!modal1Visible);
-                        }}
                     >
                         <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <Ionicons style={styles.modalText} name='help' size={30} color='#60b593'  />
-                            <Text style={styles.modalText}>Check out more about our project</Text>
+                            <Text style={styles.modalText}>Check out more about the project</Text>
                             <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => {
                                 setModal1Visible(!modal1Visible)
-                                setModal2Visible(true);
+                                setModal2Visible(true)
                             }}
                             >
                             <Text style={styles.textStyle}>Next</Text>
@@ -42,9 +38,9 @@ const HomeScreen = () => {
                     </Modal>
                     <Pressable
                         style={[styles.button, styles.buttonOpen]}
-                        onPress={() => setModal1Visible(true)}
+                        onPress={() => {setModal1Visible(true)}}
                     >
-                        <Text style={(modal1Visible || modal2Visible || modal3Visible) ? styles.textStyleOpaque: styles.textStyle}>Tutorial</Text>
+                        <Text style={(modal1Visible || modal2Visible) ? styles.textStyleOpaque: styles.textStyle}>Tutorial</Text>
                     </Pressable>
                 </View>
 
@@ -54,60 +50,26 @@ const HomeScreen = () => {
                         animationType="slide"
                         transparent={true}
                         visible={modal2Visible}
-                        onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
-                        setModal2Visible(!modal2Visible);
-                        setModal3Visible(true);
-                        }}
-                    >
-                        <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Ionicons style={styles.modalText} name='book' size={30} color='#60b593'  />
-                            <Text style={styles.modalText}>Dive into some recommended reading</Text>
-                            <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => {
-                                setModal2Visible(!modal2Visible)
-                                setModal3Visible(true);
-                            }}
-                            >
-                            <Text style={styles.textStyle}>Next</Text>
-                            </Pressable>
-                        </View>
-                        </View>
-                    </Modal>
-                </View>
-
-                {/* Modal 3 */}
-                <View style={styles.centeredView}>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modal3Visible}
-                        onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
-                        setModal1Visible(!modal3Visible);
-                        }}
                     >
                         <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <Ionicons style={styles.modalText} name='rocket' size={30} color='#60b593'  />
-                            <Text style={styles.modalText}>Use our shelter search and guide to helping</Text>
+                            <Text style={styles.modalText}>Search for nearby homeless shelters and walkthrough the process of helping! Easy-peasy.</Text>
                             <Pressable
                             style={[styles.button, styles.buttonClose]}
-                            onPress={() => setModal3Visible(!modal3Visible)}
+                            onPress={() => {setModal2Visible(!modal2Visible)}}
                             >
-                            <Text style={styles.textStyle}>Next</Text>
+                            <Text style={styles.textStyle}>Got it!</Text>
                             </Pressable>
                         </View>
                         </View>
                     </Modal>
                 </View> 
-            </View>
+            </Animatable.View>
             
-            <View style={(modal1Visible || modal2Visible || modal3Visible) ? styles.container2Blur : styles.container2}>
-                <Ionicons name='rocket' size={150} color='#60b593' style={(modal1Visible || modal2Visible || modal3Visible) ? {opacity: .5} : {opacity: 1}}  />
-            </View>
+            <Animatable.View animation='bounceInUp' duration={1900} delay={350} style={(modal1Visible || modal2Visible) ? styles.container2Blur : styles.container2}>
+                <Ionicons name='rocket' size={150} color='#60b593' style={(modal1Visible || modal2Visible) ? {opacity: .5} : {opacity: 1}}  />
+            </Animatable.View>
         </>
     );
 }

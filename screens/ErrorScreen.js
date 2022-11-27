@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView} from "react-native";
 import PlaceFinder from "../TomTom search api/placeFinder.js";
 import { useState, useEffect } from "react";
 import { StackActions } from "@react-navigation/native";
+import * as Animatable from 'react-native-animatable';
 
 const ErrorScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false)
@@ -64,7 +65,7 @@ const ErrorScreen = ({ navigation }) => {
 
     return (
         <ScrollView>
-            <View style={styles.container}>
+            <Animatable.View animation='fadeInLeft' duration={1000} delay={250} style={styles.container}>
                 <Text style={[styles.text, { fontStyle: 'italic', fontSize: 25, fontWeight: 'bold' }]}>We're Sorry,</Text>
                 <Text style={[styles.text, { marginBottom: 30 }]}>It seems we were unable to find any shelters near your location.</Text>
                 <Button
@@ -81,19 +82,22 @@ const ErrorScreen = ({ navigation }) => {
                 <Text style={[styles.text, { marginBottom: 0 }]}>Take a moment to introduce yourself</Text>
                 <Text style={[styles.text, { marginBottom: 30 }]}>And get to know them</Text>
                 <Text style={styles.text}>Kindness goes a long way.</Text>
-            </View>
+            </Animatable.View>
 
             <View style={styles.container}>
-                <Text 
-                    style={[styles.text, { fontStyle: 'italic', fontSize: 23, fontWeight: 'bold', marginBottom: 0 }]}
-                >
-                    For demonstration purposes,
-                </Text>
-                <Text 
-                    style={[styles.text, { fontStyle: 'italic', fontSize: 23, fontWeight: 'bold' }]}
-                >
-                    you may choose a major city:
-                </Text>
+                <Animatable.View animation='fadeInLeft' duration={1000} delay={250}>
+                    <Text 
+                        style={[styles.text, { fontStyle: 'italic', fontSize: 23, fontWeight: 'bold', marginBottom: 0 }]}
+                    >
+                        For demonstration purposes,
+                    </Text>
+                    <Text 
+                        style={[styles.text, { fontStyle: 'italic', fontSize: 23, fontWeight: 'bold' }]}
+                    >
+                        you may choose a major city:
+                    </Text>
+                </Animatable.View>
+                <Animatable.View animation='bounceInLeft' duration={1500} delay={250}>
                 <Button
                     title="Cincinnati, OH"
                     buttonStyle={styles.button}
@@ -101,6 +105,8 @@ const ErrorScreen = ({ navigation }) => {
                     titleStyle={{ fontWeight: 'bold' }}
                     onPress={() => getLoc('Cinci')}
                 />
+                </Animatable.View>
+                <Animatable.View animation='bounceInLeft' duration={1500} delay={500}>
                 <Button
                     title="Chicago, IL"
                     buttonStyle={styles.button}
@@ -108,13 +114,16 @@ const ErrorScreen = ({ navigation }) => {
                     titleStyle={{ fontWeight: 'bold' }}
                     onPress={() => getLoc('Chicago')}
                 />
+                </Animatable.View>
+                <Animatable.View animation='bounceInLeft' duration={1500} delay={750}>
                 <Button
                     title="Dallas, TX"
                     buttonStyle={styles.button}
                     containerStyle={styles.buttonContainer}
                     titleStyle={{ fontWeight: 'bold' }}
                     onPress={() => getLoc('Dallas')}
-                />    
+                />
+                </Animatable.View>
             </View>
         </ScrollView>
     )

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { View, StyleSheet} from "react-native";
 import { Button } from "@rneui/themed";
 import * as Location from 'expo-location';
+import * as Animatable from 'react-native-animatable';
 
 const LocalSearchScreen = ({ navigation }) => {
     const [location, setLocation] = useState(null)
@@ -10,14 +11,16 @@ const LocalSearchScreen = ({ navigation }) => {
     const [errorMsg, setErrorMsg] = useState(null)
     const [results, setResults] = useState(['empty']) // initialize to string 'empty' to recognize if later set to an empty array
 
-    // Re-initializing location to null on page load, needed if coming from "try Again" on ErrorScreen
+    // Re-initializing location and isLoading after results fetched, needed if coming from "try Again" on ErrorScreen
     useEffect(() => {
-      setIsLoading(null)
-    }, [])
+      setLocation(null)
+      setIsLoading(false)
+    }, [results])
 
     // Requesting permission and getting location with Expo Location
     const getLocation = async() => {
       setIsLoading(true)
+      console.log('location: ', location)
       let { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status !== 'granted') {
@@ -26,12 +29,13 @@ const LocalSearchScreen = ({ navigation }) => {
       }
         
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      setLocation(location)
     }
 
 
     // Call to TomTom's placeFinder API passing my API key and user location
     const shelterSearch = async() => {
+      console.log('shelterSearch isLoading: ', isLoading)
       const lat = location.coords.latitude
       const lng = location.coords.longitude
   
@@ -54,7 +58,7 @@ const LocalSearchScreen = ({ navigation }) => {
     
     // Navigate to loading when isLoading changes to true and no location set
     useEffect(() => {
-      if (isLoading && !location) {
+      if (isLoading && (!location || location === undefined)) {
         navigation.navigate('loading')
       }
     }, [isLoading])
@@ -74,7 +78,7 @@ const LocalSearchScreen = ({ navigation }) => {
 
         return (
           <View style={styles.container}>
-            <View style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
+            <Animatable.View animation='bounceInLeft' duration={1500} delay={0} style={{marginTop: 10, padding: 10, borderRadius: 10, width: '40%'}}>
               <Button
                 type='solid' 
                 title="Search" 
@@ -82,7 +86,7 @@ const LocalSearchScreen = ({ navigation }) => {
                 buttonStyle={{ borderRadius: 20 }}
                 onPress={() => getLocation()}
               />
-            </View>
+            </Animatable.View>
           </View>
       );  
 }

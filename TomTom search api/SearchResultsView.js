@@ -1,44 +1,40 @@
 import { FlatList, Text, SafeAreaView } from "react-native";
 import { Avatar, Card, ListItem, Icon, Button } from "@rneui/themed";
+import * as Animatable from 'react-native-animatable';
 
 
 // Convert distance from location (meters to miles)
 function metersToMi (dist) {
     return dist = (dist * 0.000621371).toFixed(2)
 }
-
-// // // Content of each item in flatlist
-// // const Item = ({ name, dist, id, navigation }) => {
-// //     return ( 
-            
-// //     );
-// }
   
 const SearchResultsView = ({route, navigation}) => {
     const { results } = route.params;
-    console.log('searchResultsView,', results)
+    let delay = 0
 
-    const renderItem = ({ item: shelter }, dist) => {
-        console.log('shelter name', shelter.poi.name)
+    const renderItem = ({ item: shelter }) => {
+        delay = delay + 125
         return (
-            <Card>
-                <Card.Title style={{ fontSize: 20 }}>{shelter.poi.name}</Card.Title>
-                <Card.Divider></Card.Divider>
-                <ListItem key={shelter.id}>
-                    <ListItem.Content style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-                        <Text style={{ fontSize: 23 }}>
-                            {`${metersToMi(shelter.dist)} miles`}
-                        </Text>
-                    </ListItem.Content>
-                        <Avatar
-                            size={50} 
-                            rounded
-                            icon={{ name: 'arrow-forward-outline', type: 'ionicon' }}
-                            containerStyle={{ backgroundColor: '#4f7ba5' }}
-                            onPress={() => navigation.navigate('resultDetails', { shelter })}
-                        />  
-                </ListItem>   
-            </Card>
+            <Animatable.View animation='bounceInLeft' duration={1500} delay={delay}>
+                <Card>
+                    <Card.Title style={{ fontSize: 20 }}>{shelter.poi.name}</Card.Title>
+                    <Card.Divider></Card.Divider>
+                    <ListItem key={shelter.id}>
+                        <ListItem.Content style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                            <Text style={{ fontSize: 23 }}>
+                                {`${metersToMi(shelter.dist)} miles`}
+                            </Text>
+                        </ListItem.Content>
+                            <Avatar
+                                size={50} 
+                                rounded
+                                icon={{ name: 'arrow-forward-outline', type: 'ionicon' }}
+                                containerStyle={{ backgroundColor: '#4f7ba5' }}
+                                onPress={() => navigation.navigate('resultDetails', { shelter })}
+                            />  
+                    </ListItem>   
+                </Card>
+            </Animatable.View>
         )
     }
 
