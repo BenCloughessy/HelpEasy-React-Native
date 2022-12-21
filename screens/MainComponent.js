@@ -4,6 +4,7 @@ import HomeScreen from "./HomeScreen";
 import AboutScreen from "./AboutScreen";
 import { Ionicons } from '@expo/vector-icons';
 import SearchStack from "./SearchStack";
+import AddShelter from "./AddShelter";
 
 
 const screenOptions = ({ route }) => ({
@@ -16,8 +17,8 @@ const screenOptions = ({ route }) => ({
       iconName = 'rocket';
     } else if (route.name === 'About') {
       iconName = 'help';
-    } else if (route.name === 'Resources') {
-      iconName = 'book';
+    } else if (route.name === 'Add Shelter') {
+      iconName = 'settings';
     }
   
     return <Ionicons name={iconName} size={size} color={color} />;
@@ -49,10 +50,17 @@ const Main = () => {
                 />
 
                 <Tab.Screen 
+                    name="Add Shelter"
+                    component={AddShelter}
+                    options={{ title: 'Help Easy', tabBarLabel: 'Add Shelter' }}
+                />
+
+                <Tab.Screen 
                     name="About"
                     component={AboutScreen}
                     options={{ title: 'Help Easy', tabBarLabel: 'About Us' }}
                 />
+
             </Tab.Navigator>
         </View>
     );
