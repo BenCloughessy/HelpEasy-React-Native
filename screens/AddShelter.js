@@ -3,19 +3,26 @@ import { ScrollView, StyleSheet, Linking } from "react-native";
 import axios from "axios";
 import { useState } from "react";
 
-
-
 const AddShelter = () => {
     const [name, setName] = useState('')
     const [city, setCity] = useState('')
     const [state, setState] = useState('')
 
     const submitRequestForm = async(name, city, state) => {
+        const data = { name, city, state }
+        console.log(data)
         // Send a POST request to server
-        axios({
-            method: 'post',
-            url: "mongodb+srv://HelpEasy:HelpEasy@cluster0.wvfmn6c.mongodb.net/?retryWrites=true&w=majority",
-            data: {name, city, state}
+        fetch('http://192.168.50.244:3000/requestforms', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name,
+                city,
+                state
+            })
         });
     }
 
@@ -44,7 +51,7 @@ const AddShelter = () => {
                     title={'React Native Elements'}
                     containerStyle={styles.container}
                     buttonStyle={styles.button}
-                    onPress={() => submitRequestForm()}
+                    onPress={() => submitRequestForm(name, city, state)}
                 />
             </Card>
         </ScrollView>
