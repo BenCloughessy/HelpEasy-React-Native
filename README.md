@@ -9,7 +9,7 @@ Anyone can use Google Maps to find nearby homeless shelters. So, why HelpEasy? T
 
 # I imagine religious groups, non-profits, and other community-minded individuals using and promoting HelpEasy as a tool to facilitate outreach.
 
-# Bugs, Questions, and Ideas
+Bugs, Questions, and Ideas
 At present, I'm unsure if I will ever take the app to production. That said, I can be reached by email at cloughessybenjamin@gmail.com
 
 # Want to join?
