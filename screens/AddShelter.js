@@ -12,7 +12,7 @@ const AddShelter = () => {
         const data = { name, city, state }
         console.log(data)
         // Send a POST request to server
-        fetch('http://192.168.50.244:3000/requestforms', {
+        fetch('http://192.168.50.244:3001/requestforms', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

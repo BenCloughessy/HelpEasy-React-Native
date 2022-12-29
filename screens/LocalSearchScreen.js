@@ -48,10 +48,24 @@ const LocalSearchScreen = ({ navigation }) => {
       return results
     }
 
+    // Query MongoDB Atlas database for shelters
+    const atlasSearch = async() => {
+      const atlasResults = await fetch(`http://192.168.50.244:3001/shelters/${location.coords.longitude}/${location.coords.latitude}`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        }
+      }).then((response) => response.json())
+
+      console.log(atlasResults)
+    }
+
     // Using location to search for shelters after location has been set
     useEffect(() => {
       if (location) {
         shelterSearch()
+        atlasSearch()
       }
     }, [location])
 
