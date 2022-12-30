@@ -10,6 +10,8 @@ const LocalSearchScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [errorMsg, setErrorMsg] = useState(null)
     const [results, setResults] = useState(['empty']) // initialize to string 'empty' to recognize if later set to an empty array
+    const [atlasResults, setAtlasResults] = useState(['empty'])
+    const [tomtomResults, setTomtomResults] = useState(['empty'])
 
     // Re-initializing location and isLoading after results fetched, needed if coming from "try Again" on ErrorScreen
     useEffect(() => {
@@ -41,11 +43,12 @@ const LocalSearchScreen = ({ navigation }) => {
   
       
       let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
-      let results = await placeFinder.getNearbyPlaces(lat, lng)
-      results = results.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
-      results = results.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
-      setResults(results);
-      return results
+      let tomtomResults = await placeFinder.getNearbyPlaces(lat, lng)
+      tomtomResults = tomtomResults.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
+      tomtomResults = tomtomResults.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
+      console.log("tomtom results",tomtomResults)
+      setTomtomResults(tomtomResults);
+      return tomtomResults
     }
 
     // Query MongoDB Atlas database for shelters
@@ -58,16 +61,44 @@ const LocalSearchScreen = ({ navigation }) => {
         }
       }).then((response) => response.json())
 
-      console.log(atlasResults)
+      console.log("atlas results",atlasResults)
+
+      setAtlasResults(atlasResults)
+      return atlasResults
     }
 
-    // Using location to search for shelters after location has been set
+    // Using location to call tomtom api after location has been set
     useEffect(() => {
       if (location) {
         shelterSearch()
-        atlasSearch()
       }
     }, [location])
+
+    // Querying atlas database after results from tomtom are set
+    useEffect(() => {
+      if (location) {
+        atlasSearch()
+      }
+    }, [tomtomResults])
+
+    // Merging tomtom and atlas results once both have been set
+    useEffect(() => {
+      if(location) {
+        console.log("merging...",[...atlasResults, tomtomResults])
+
+        // Include only non-empty arrays in the new array, else the array is empty.
+        if(tomtomResults.length > 0 && atlasResults.length > 0) {
+          setResults([...atlasResults, tomtomResults])
+        } else if (tomtomResults.length > 0 && !(atlasResults.length > 0)) {
+          setResults(tomtomResults)
+        }else if (!(tomtomResults.length > 0) && atlasResults.length > 0) {
+          setResults(atlasResults)
+        } else {
+          setResults([])
+        }
+        
+      }
+    }, [atlasResults])
 
     
     // Navigate to loading when isLoading changes to true and no location set
@@ -84,6 +115,7 @@ const LocalSearchScreen = ({ navigation }) => {
         if (results.length === 0) { 
           navigation.navigate('error', {errorMsg})
         } else {
+          console.log('navigating to search results. Results:', results)
           navigation.navigate('searchResults', {results})
         }
       }

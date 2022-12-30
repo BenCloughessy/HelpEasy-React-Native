@@ -8,6 +8,8 @@ import * as Animatable from 'react-native-animatable';
 const ErrorScreen = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [results, setResults] = useState(['empty']) // initialize to this string to catch a change even if results returns empty array
+    const [atlasResults, setAtlasResults] = useState(['empty'])
+    const [tomtomResults, setTomtomResults] = useState(['empty'])
     const [lat, setLat] = useState(null)
     const [lng, setLng] = useState(null)
 
@@ -29,23 +31,66 @@ const ErrorScreen = ({ navigation }) => {
         return (lat, lng)
     }
 
-    // Call to TomTom's placeFinder API passing my API key 
+    // Call to TomTom's placeFinder API passing my API key and user location
     const shelterSearch = async() => {
         let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
-        let results = await placeFinder.getNearbyPlaces(lat, lng)
-        results = results.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
-        results = results.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
-        setResults(results)
-        
-        return results
-    }
-        
-      // Using location to search for shelters after lat and lng have been set
+        let tomtomResults = await placeFinder.getNearbyPlaces(lat, lng)
+        tomtomResults = tomtomResults.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
+        tomtomResults = tomtomResults.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
+        console.log("tomtom results",tomtomResults)
+        setTomtomResults(tomtomResults);
+        return tomtomResults
+      }
+  
+      // Query MongoDB Atlas database for shelters
+      const atlasSearch = async() => {
+        const atlasResults = await fetch(`http://192.168.50.244:3001/shelters/${lng}/${lat}`, {
+          method: 'GET',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          }
+        }).then((response) => response.json())
+  
+        console.log("atlas results",atlasResults)
+  
+        setAtlasResults(atlasResults)
+        return atlasResults
+      }
+  
+      // Using location to call tomtom api after location has been set
       useEffect(() => {
-        if (lat) {
+        if (lng) {
           shelterSearch()
-        } 
-      }, [lat])
+        }
+      }, [lng])
+  
+      // Querying atlas database after results from tomtom are set
+      useEffect(() => {
+        if (lng) {
+          atlasSearch()
+        }
+      }, [tomtomResults])
+  
+      // Merging tomtom and atlas results once both have been set
+      useEffect(() => {
+        if(lng) {
+          console.log("merging...",[...atlasResults, tomtomResults])
+  
+          // Include only non-empty arrays in the new array, else the array is empty.
+          if(tomtomResults.length > 0 && atlasResults.length > 0) {
+            setResults([...atlasResults, tomtomResults]) 
+            console.log("push results",results)
+          } else if (tomtomResults.length > 0 && !(atlasResults.length > 0)) {
+            setResults(tomtomResults)
+          }else if (!(tomtomResults.length > 0) && atlasResults.length > 0) {
+            setResults(atlasResults)
+          } else {
+            setResults([])
+          }
+          
+        }
+      }, [atlasResults])
 
        // Navigate to loadingScreen when isLoading but before setting coordinates
        useEffect(() => {
