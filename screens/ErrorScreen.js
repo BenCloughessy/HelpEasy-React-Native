@@ -36,7 +36,7 @@ const ErrorScreen = ({ navigation }) => {
         let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
         let tomtomResults = await placeFinder.getNearbyPlaces(lat, lng)
         tomtomResults = tomtomResults.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
-        tomtomResults = tomtomResults.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
+        
         console.log("tomtom results",tomtomResults)
         setTomtomResults(tomtomResults);
         return tomtomResults
@@ -75,12 +75,13 @@ const ErrorScreen = ({ navigation }) => {
       // Merging tomtom and atlas results once both have been set
       useEffect(() => {
         if(lng) {
-          console.log("merging...",[...atlasResults, tomtomResults])
+          console.log("merging...",[...atlasResults, ...tomtomResults])
   
           // Include only non-empty arrays in the new array, else the array is empty.
           if(tomtomResults.length > 0 && atlasResults.length > 0) {
-            setResults([...atlasResults, tomtomResults]) 
-            console.log("push results",results)
+            let mergedArray = [...atlasResults, ...tomtomResults]
+            mergedArray.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
+            setResults(mergedArray) 
           } else if (tomtomResults.length > 0 && !(atlasResults.length > 0)) {
             setResults(tomtomResults)
           }else if (!(tomtomResults.length > 0) && atlasResults.length > 0) {
