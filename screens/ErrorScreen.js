@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView} from "react-native";
 import PlaceFinder from "../TomTom search api/placeFinder.js";
 import { useState, useEffect } from "react";
 import { StackActions } from "@react-navigation/native";
+import calcDist from "../MongoDB Query/calcDist.js";
 import * as Animatable from 'react-native-animatable';
 
 const ErrorScreen = ({ navigation }) => {
@@ -37,7 +38,7 @@ const ErrorScreen = ({ navigation }) => {
         let tomtomResults = await placeFinder.getNearbyPlaces(lat, lng)
         tomtomResults = tomtomResults.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
         
-        console.log("tomtom results",tomtomResults)
+        // console.log("tomtom results",tomtomResults)
         setTomtomResults(tomtomResults);
         return tomtomResults
       }
@@ -51,9 +52,29 @@ const ErrorScreen = ({ navigation }) => {
               'Content-Type': 'application/json',
           }
         }).then((response) => response.json())
-  
+
+        // extracting user location to pass to calcDist()
+        const userCoord = {
+          lng,
+          lat
+        }
+
+        // Loop through each result from Atlas, pass coordinates to calcDist() to calculate distance
+        for (let i = 0; i < atlasResults.length; i++) {
+
+          // Extracting atlas location to pass to calcDist()
+          let atlasCoord = {
+            lng: atlasResults[i].location.coordinates[0],
+            lat: atlasResults[i].location.coordinates[1]
+          }
+
+          // Pass in both sets of coordinates, return and set new calculated distance
+          let dist = calcDist(userCoord, atlasCoord)
+          console.log('calculated dist = ', dist)
+          atlasResults[i].dist = dist
+        }
+
         console.log("atlas results",atlasResults)
-  
         setAtlasResults(atlasResults)
         return atlasResults
       }
@@ -75,7 +96,6 @@ const ErrorScreen = ({ navigation }) => {
       // Merging tomtom and atlas results once both have been set
       useEffect(() => {
         if(lng) {
-          console.log("merging...",[...atlasResults, ...tomtomResults])
   
           // Include only non-empty arrays in the new array, else the array is empty.
           if(tomtomResults.length > 0 && atlasResults.length > 0) {

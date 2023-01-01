@@ -2,6 +2,7 @@ import PlaceFinder from "../TomTom search api/placeFinder.js";
 import { useState, useEffect } from "react";
 import { View, StyleSheet} from "react-native";
 import { Button } from "@rneui/themed";
+import calcDist from "../MongoDB Query/calcDist.js";
 import * as Location from 'expo-location';
 import * as Animatable from 'react-native-animatable';
 
@@ -45,7 +46,7 @@ const LocalSearchScreen = ({ navigation }) => {
       let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
       let tomtomResults = await placeFinder.getNearbyPlaces(lat, lng)
       tomtomResults = tomtomResults.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
-      console.log("tomtom results",tomtomResults)
+      // console.log("tomtom results",tomtomResults)
       setTomtomResults(tomtomResults);
       return tomtomResults
     }
@@ -60,7 +61,25 @@ const LocalSearchScreen = ({ navigation }) => {
         }
       }).then((response) => response.json())
 
-      console.log("atlas results",atlasResults)
+      // extracting user location to pass to calcDist()
+      const userCoord = {
+        lng: location.coords.longitude,
+        lat: location.coords.latitude
+      }
+
+      // Loop through each result from Atlas, pass coordinates to calcDist() to calculate distance
+      for (let i = 0; i < atlasResults.length; i++) {
+
+        // Extracting atlas location to pass to calcDist()
+        let atlasCoord = {
+          lng: atlasResults[i].location.coordinates[0],
+          lat: atlasResults[i].location.coordinates[1]
+        }
+
+        // Pass in both sets of coordinates, return and set new calculated distance
+        let dist = calcDist(userCoord, atlasCoord)
+        atlasResults[i].dist = dist
+      }
 
       setAtlasResults(atlasResults)
       return atlasResults
@@ -83,7 +102,6 @@ const LocalSearchScreen = ({ navigation }) => {
     // Merging tomtom and atlas results once both have been set
     useEffect(() => {
       if(location) {
-        console.log("merging...",[...atlasResults, ...tomtomResults])
 
         // Include only non-empty arrays in the new array, else the array is empty.
         if(tomtomResults.length > 0 && atlasResults.length > 0) {
