@@ -22,21 +22,30 @@ export default class PlaceFinder {
         }
     }
 
-    // Filter function to keep only relevant results
+    // Filter function to keep only relevant results and remove duplicates
     filterResults(results) {
-        const relevantKeywords = ["homeless", "shelter", "emergency shelter", "transitional", "housing", "homeless services"];
+        const relevantKeywords = ["homeless", "shelter", "emergency shelter", "transitional", "housing", "homeless services", "gospel mission"]
+        const uniqueIds = new Set()
+        const uniqueNames = new Set()
 
         return results.filter(result => {
-            const name = result.poi.name.toLowerCase();
-            // const address = result.address.freeformAddress.toLowerCase();
-            // const description = result.poi.description ? result.poi.description.toLowerCase() : "";
-
-            return relevantKeywords.some(keyword => name.includes(keyword));
-        });
+            const name = result.poi.name.toLowerCase()
+            // Filter to remove bad results
+            if(relevantKeywords.some(keyword => name.includes(keyword))) {
+                // Filter to remove duplicates
+                if (uniqueIds.has(result.id) || uniqueNames.has(name)) {
+                    return false
+                } else {
+                    uniqueIds.add(result.id)
+                    uniqueNames.add(name)
+                    return true
+                }
+            }            
+        })
     }
 
     async getNearbyPlaces(lat, lng) {
-        const keywords = ["homeless%20shelter", "emergency%20shelter", "transitional%20housing", "homeless%20services"]
+        const keywords = ["homeless%20shelter", "emergency%20shelter", "transitional%20housing", "homeless%20services", "gospel%20mission"]
         const allResults = []
 
         // loop through keywords and make api calls

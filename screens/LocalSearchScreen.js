@@ -102,17 +102,21 @@ const LocalSearchScreen = ({ navigation }) => {
 
     // Merging tomtom and atlas results once both have been set
     useEffect(() => {
-      if(location) {
 
+      const mergeAndSort = (results) => {
+        results.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
+        setResults(results) 
+      }
+
+      if(location) {
         // Include only non-empty arrays in the new array, else the array is empty.
         if(tomtomResults.length > 0 && atlasResults.length > 0) {
           let mergedArray = [...atlasResults, ...tomtomResults]
-          mergedArray.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
-          setResults(mergedArray) 
+          mergeAndSort(mergedArray) 
         } else if (tomtomResults.length > 0 && !(atlasResults.length > 0)) {
-          setResults(tomtomResults)
+          mergeAndSort(tomtomResults)
         }else if (!(tomtomResults.length > 0) && atlasResults.length > 0) {
-          setResults(atlasResults)
+          mergeAndSort(atlasResults)
         } else {
           setResults([])
         }
