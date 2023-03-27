@@ -35,7 +35,7 @@ const Tab = createBottomTabNavigator();
 const Main = () => {
  
     return (
-        <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
+        <View style={{ flex: 1 , paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight}}>
             <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
                 <Tab.Screen 
                     name="Home"
