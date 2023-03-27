@@ -45,6 +45,7 @@ const LocalSearchScreen = ({ navigation }) => {
       
       let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
       let tomtomResults = await placeFinder.getNearbyPlaces(lat, lng)
+      console.log("tomtom results:", tomtomResults)
       tomtomResults = tomtomResults.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
       tomtomResults = tomtomResults.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
       setTomtomResults(tomtomResults);
