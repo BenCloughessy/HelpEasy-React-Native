@@ -1,9 +1,10 @@
 import { Button, Text } from "@rneui/themed";
 import { View, StyleSheet, ScrollView} from "react-native";
-import PlaceFinder from "../TomTom search api/placeFinder.js";
+import shelterSearch from "../TomTom search api/shelterSearch.js";
 import { useState, useEffect } from "react";
 import { StackActions } from "@react-navigation/native";
-import calcDist from "../MongoDB Query/calcDist.js";
+import atlasSearch from "../MongoDB Query/atlasSearch.js";
+import mergeData from "../Merge Results/mergeAndSort.js";
 import * as Animatable from 'react-native-animatable';
 
 const ErrorScreen = ({ navigation }) => {
@@ -31,90 +32,27 @@ const ErrorScreen = ({ navigation }) => {
         
         return (lat, lng)
     }
-
-    // Call to TomTom's placeFinder API passing my API key and user location
-    const shelterSearch = async() => {
-        let placeFinder = new PlaceFinder('aWYBPDg8q4jsUHu3EViMzBg3kJi91gaV');
-        let tomtomResults = await placeFinder.getNearbyPlaces(lat, lng)
-        tomtomResults = tomtomResults.filter((result) => result.poi.name !== 'Homeless Shelter') // filtering out results with non-unique names
-        
-        // console.log("tomtom results",tomtomResults)
-        setTomtomResults(tomtomResults);
-        return tomtomResults
-      }
-  
-      // Query MongoDB Atlas database for shelters
-      const atlasSearch = async() => {
-        const atlasResults = await fetch(`http://192.168.50.244:3001/shelters/${lng}/${lat}`, {
-          method: 'GET',
-          headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-          }
-        }).then((response) => response.json())
-
-        // extracting user location to pass to calcDist()
-        const userCoord = {
-          lng,
-          lat
-        }
-
-        // Loop through each result from Atlas, pass coordinates to calcDist() to calculate distance
-        for (let i = 0; i < atlasResults.length; i++) {
-
-          // Extracting atlas location to pass to calcDist()
-          let atlasCoord = {
-            lng: atlasResults[i].location.coordinates[0],
-            lat: atlasResults[i].location.coordinates[1]
-          }
-
-          // Pass in both sets of coordinates, return and set new calculated distance
-          let dist = calcDist(userCoord, atlasCoord)
-          console.log('calculated dist = ', dist)
-          atlasResults[i].dist = dist
-        }
-
-        console.log("atlas results",atlasResults)
-        setAtlasResults(atlasResults)
-        return atlasResults
-      }
   
       // Using location to call tomtom api after location has been set
       useEffect(() => {
         if (lng) {
-          shelterSearch()
+          shelterSearch(lat, lng)
+            .then((res) => setTomtomResults(res))
         }
       }, [lng])
   
       // Querying atlas database after results from tomtom are set
       useEffect(() => {
         if (lng) {
-          atlasSearch()
+          atlasSearch(lng, lat)
+            .then((res) => setAtlasResults(res))
         }
       }, [tomtomResults])
   
       // Merging tomtom and atlas results once both have been set
       useEffect(() => {
-
-        const mergeAndSort = (results) => {
-          results.sort((a, b) => a.dist - b.dist) // sorting results by distance from user
-          setResults(results) 
-        }
-
-        if(lng) {
-          // Include only non-empty arrays in the new array, else the array is empty.
-          if(tomtomResults.length > 0 && atlasResults.length > 0) {
-            let mergedArray = [...atlasResults, ...tomtomResults]
-            mergeAndSort(mergedArray) 
-          } else if (tomtomResults.length > 0 && !(atlasResults.length > 0)) {
-            mergeAndSort(tomtomResults)
-          }else if (!(tomtomResults.length > 0) && atlasResults.length > 0) {
-            mergeAndSort(atlasResults)
-          } else {
-            setResults([])
-          }
-          
-        }
+        let mergedResults = mergeData(atlasResults, tomtomResults)
+        setResults(mergedResults)
       }, [atlasResults])
 
        // Navigate to loadingScreen when isLoading but before setting coordinates
@@ -124,14 +62,12 @@ const ErrorScreen = ({ navigation }) => {
           }
        }, [lat])
        
-
       // Navigate to searchResultsView when results populates
       useEffect(() => {
         if(!(results[0] === 'empty')) {
             navigation.navigate('searchResults', {results})
         }
       }, [results])
-      
 
     return (
         <ScrollView>
