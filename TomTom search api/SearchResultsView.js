@@ -1,6 +1,7 @@
 import { FlatList, Text, SafeAreaView } from "react-native";
 import { Avatar, Card, ListItem, Icon, Button } from "@rneui/themed";
 import * as Animatable from 'react-native-animatable';
+import { StackActions } from "@react-navigation/native";
 
 
 // Convert distance from location (meters to miles)
@@ -45,10 +46,12 @@ const SearchResultsView = ({route, navigation}) => {
                 containerStyle={{ width: 100, marginLeft: 14, marginTop: 8 }}
                 buttonStyle={{ borderRadius: 25 }}
                 color='#4f7ba5'
-                onPress={() => navigation.goBack()}
+                onPress={() => 
+                    navigation.dispatch(StackActions.popToTop)
+                }
             >
                 <Icon name="arrow-back-outline" type='ionicon' color="white" />
-                Back
+                    Back
             </Button>
 
             <SafeAreaView style={{ flex: 1}}>
